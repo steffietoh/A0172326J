@@ -1,0 +1,11 @@
+PASS	Basic Statistics	A0172326J_2.fq
+PASS	Per base sequence quality	A0172326J_2.fq
+PASS	Per sequence quality scores	A0172326J_2.fq
+PASS	Per base sequence content	A0172326J_2.fq
+PASS	Per sequence GC content	A0172326J_2.fq
+PASS	Per base N content	A0172326J_2.fq
+PASS	Sequence Length Distribution	A0172326J_2.fq
+PASS	Sequence Duplication Levels	A0172326J_2.fq
+PASS	Overrepresented sequences	A0172326J_2.fq
+PASS	Adapter Content	A0172326J_2.fq
+WARN	Kmer Content	A0172326J_2.fq
