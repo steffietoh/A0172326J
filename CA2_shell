@@ -1,0 +1,41 @@
+### make directories ###
+cd Desktop/
+mkdir -p CA2/data CA2/results
+cd CA2/results/
+mkdir reads/ sam/ bam/ bed/ fastqc/
+cd ../
+
+### download and move sacCer3.fa and ty5_6p.fa files into data/ ###
+
+### build index from both sacCer3 genome and transposon sequence ###
+bowtie2-build data/sacCer3.fa,data/ty5_6p.fa data/genomeWtransposon
+export BOWTIE2_INDEXES=$(pwd)/data/genomeWtransposon
+
+### download and move A0172326J.tgz from https://mynbox.nus.edu.sg/userportal/#/shared/public/wHjb7fj42-3SeNvq/LSM3241-CA2 ###
+### into data/reads/ ###
+gunzip data/reads/A0172326J.tgz
+tar -xvf data/reads/A0172326J.tar
+
+### use FastQC to check R1 and R2 quality ###
+fastqc data/reads/*.fq -o results/fastqc
+
+### align reads ###
+bowtie2 -x data/genomeWtransposon --very-sensitive -p 4 -1 results/reads/A0172326J_1.fq -2 results/reads/A0172326J_2.fq -S results/sam/A0172326J.sam
+
+cd results/
+
+### exclude reads that are properly mapped in a pair, filter the rest into output.bam file ###
+samtools view -b -F 2 sam/A0172326J.sam > bam/output.bam
+
+### sort and index output file ###
+samtools sort bam/output.bam > bam/output-sorted.bam
+samtools index bam/output-sorted.bam
+
+### convert output bam file to bed file ###
+bedtools bamtobed -i bam/output-sorted.bam > bed/output-sorted.bed
+
+### combine overlapping features of remaining reads, only merging features on the same strand ###
+### to generate a csv file with the chromosomal location and strand data for each feature ###
+bedtools merge -i bed/output-sorted.bed -s > merged.csv
+
+### downstream analysis can be done using excel ###
